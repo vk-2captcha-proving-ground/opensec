@@ -124,7 +124,7 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const encoded = urlParams.get('urls.json');
+        const encoded = urlParams.get('open');
         if (encoded) {
             setTimeout(() => {
                 window.location.replace(atob(encoded));
