@@ -223,9 +223,9 @@
                             window.location.replace(activeUrl);
                         }, 3000);
                     } else {
-                        titleEl.innerText = "Технические работы";
-                        descEl.innerText = "К сожалению, все серверы в данный момент перегружены или недоступны. Пожалуйста, попробуйте через 15 минут";
-                        statusEl.innerText = "Ошибка: Нет доступных шлюзов.";
+                        titleEl.innerText = "Ошибка соединения";
+                        descEl.innerText = "Попробуйте подключиться позже или используйте средства восстановления подключения к сети Интернет.";
+                        statusEl.innerText = "Ошибка: Сбой проверки соединения.";
                         statusEl.style.color = "#e74c3c";
                         if(loaderEl) loaderEl.style.display = 'none';
                     }
